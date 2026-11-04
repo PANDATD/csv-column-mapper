@@ -16,9 +16,9 @@ router = APIRouter(prefix="/api")
 
 @router.post("/match")
 async def match_csv_files(
-    source_file: UploadFile = File(...),
-    destination_file: UploadFile = File(...),
-    cutoff: float = Form(0.80, ge=0.50, le=1.00),
+    source_file: UploadFile = File(...),  # noqa: B008
+    destination_file: UploadFile = File(...),  # noqa: B008
+    cutoff: float = Form(0.80, ge=0.50, le=1.00),  # noqa: B008
 ) -> dict[str, object]:
     for upload in (source_file, destination_file):
         if upload.filename and not upload.filename.lower().endswith(".csv"):
@@ -49,7 +49,11 @@ async def review_mappings(payload: ReviewRequest) -> ReviewResponse:
     ):
         raise HTTPException(422, "Column lists must not contain duplicates.")
     try:
-        mappings = validate_mappings(tuple(payload.source_columns), tuple(payload.destination_columns), payload.mappings)
+        mappings = validate_mappings(
+            tuple(payload.source_columns),
+            tuple(payload.destination_columns),
+            payload.mappings,
+        )
     except ValueError as exc:
         raise HTTPException(422, str(exc)) from exc
     return ReviewResponse(mappings=mappings, count=len(mappings))
@@ -58,7 +62,11 @@ async def review_mappings(payload: ReviewRequest) -> ReviewResponse:
 @router.post("/export")
 async def export_mappings(payload: ReviewRequest) -> StreamingResponse:
     try:
-        mappings = validate_mappings(tuple(payload.source_columns), tuple(payload.destination_columns), payload.mappings)
+        mappings = validate_mappings(
+            tuple(payload.source_columns),
+            tuple(payload.destination_columns),
+            payload.mappings,
+        )
     except ValueError as exc:
         raise HTTPException(422, str(exc)) from exc
     output = io.StringIO(newline="")
