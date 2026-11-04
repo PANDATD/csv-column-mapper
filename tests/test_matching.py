@@ -2,7 +2,11 @@ from app.core.matching import match_columns, validate_mappings
 
 
 def test_exact_matches_and_suggestions_are_reported() -> None:
-    result = match_columns(("id", "first_name", "email"), ("id", "firstName", "email_address"), 0.70)
+    result = match_columns(
+        ("id", "first_name", "email"),
+        ("id", "firstName", "email_address"),
+        0.70,
+    )
     assert result["exact_matches"] == ["id"]
     assert result["summary"]["source_columns"] == 3
 
